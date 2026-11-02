@@ -30,7 +30,7 @@ side = "BOTH"
 [[dependencies.mdm_vista]]
 modId = "vista"
 type = "required"
-versionRange = "[1.21.1-5.5.7]"
+versionRange = "[1.21.1-5.5.7,1.21.1-5.7)"
 ordering = "AFTER"
 side = "BOTH"
 
