@@ -1,0 +1,42 @@
+modLoader = "javafml"
+loaderVersion = "*"
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "mdm_vista"
+version = "0.1.0"
+displayName = "Vista & Music Disc Maker"
+authors = "KURONAMI333"
+logoFile = "logo.png"
+description = '''Connects MDM Golden Jukebox video to Vista screens while MDM owns audio playback.'''
+
+[[mixins]]
+config = "mdm_vista.mixins.json"
+
+[[dependencies.mdm_vista]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.mdm_vista]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.21.2)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.mdm_vista]]
+modId = "vista"
+type = "required"
+versionRange = "[1.21.1-5.5.7]"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.mdm_vista]]
+modId = "music_disc_maker"
+type = "required"
+versionRange = "[3.1.2,3.2.0)"
+ordering = "AFTER"
+side = "BOTH"

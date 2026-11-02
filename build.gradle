@@ -1,0 +1,152 @@
+plugins {
+    id 'java'
+    id 'net.neoforged.moddev' version '2.0.142'
+}
+
+group = 'com.kuronami.mdmvista'
+version = '0.1.0+1.21.1'
+
+base {
+    archivesName = 'mdm-vista-neoforge-1.21.1'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+
+neoForge {
+    version = '21.1.227'
+    mods {
+        create('mdm_vista') {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+dependencies {
+    // Local jars: Music Disc Maker 3.1.2, Vista 5.5.7, Moonlight 3.4.0 (see README for download sources).
+    compileOnly files(
+        'libs/music_disc_maker-3.1.2+neoforge-1.21.1.jar',
+        'libs/vista-1.21.1-5.5.7-neoforge.jar',
+        'libs/moonlight-1.21.1-3.4.0-neoforge.jar'
+    )
+    // Package Java APIs only. Platform binaries are checksum-installed on demand into the game directory.
+    jarJar(implementation('org.bytedeco:javacv:1.5.11') { transitive = false }) {
+        version { strictly '[1.5.11,1.5.12)'; prefer '1.5.11' }
+    }
+    jarJar(implementation('org.bytedeco:ffmpeg:7.1-1.5.11') { transitive = false }) {
+        version { strictly '[7.1-1.5.11,7.1-1.5.12)'; prefer '7.1-1.5.11' }
+    }
+    jarJar(implementation('org.bytedeco:javacpp:1.5.11') { transitive = false }) {
+        version { strictly '[1.5.11,1.5.12)'; prefer '1.5.11' }
+    }
+}
+
+// JavaCV 1.5.11's multi-release module descriptor hard-requires optional GUI and
+// camera modules that are not part of this addon. Keep the vendor JAR intact in
+// Gradle's cache and derive a class-byte-identical JarJar payload for the product.
+tasks.named('jarJar') {
+    outputs.upToDateWhen { false }
+    outputs.cacheIf { false }
+    doLast {
+        File nestedJar = layout.buildDirectory.file('generated/jarJar/META-INF/jarjar/javacv-1.5.11.jar').get().asFile
+        File receiptFile = layout.buildDirectory.file('reports/javacv-packaging/receipt.json').get().asFile
+        String expectedVendorSha = '357b4ed1758d2c711a9711ccf9639079c0707c4fa302ba6b9eee0a14b5338a9d'
+        def sha256 = { byte[] bytes ->
+            java.security.MessageDigest.getInstance('SHA-256').digest(bytes).collect { String.format('%02x', it & 0xff) }.join()
+        }
+        if (!nestedJar.isFile() || sha256(nestedJar.bytes) != expectedVendorSha) {
+            throw new GradleException("Unexpected JavaCV JarJar input: ${nestedJar}")
+        }
+
+        def originalEntries = new LinkedHashMap<String, byte[]>()
+        def originalTimes = new LinkedHashMap<String, Long>()
+        new java.util.zip.ZipFile(nestedJar).withCloseable { zip ->
+            zip.entries().each { entry ->
+                if (!entry.directory) {
+                    if (originalEntries.containsKey(entry.name)) throw new GradleException("Duplicate JavaCV entry: ${entry.name}")
+                    originalEntries[entry.name] = zip.getInputStream(entry).withCloseable { it.bytes }
+                    originalTimes[entry.name] = entry.time
+                }
+            }
+        }
+        String moduleDescriptor = 'META-INF/versions/9/module-info.class'
+        if (originalEntries.keySet().count { it == moduleDescriptor } != 1) {
+            throw new GradleException('Expected exactly one JavaCV multi-release module descriptor')
+        }
+        def signatures = originalEntries.keySet().findAll { it ==~ /(?i)META-INF\/[^\/]+\.(SF|RSA|DSA|EC)/ }
+        if (!signatures.isEmpty()) throw new GradleException("Refusing to alter signed JavaCV JAR entries: ${signatures}")
+
+        def manifestEntry = 'META-INF/MANIFEST.MF'
+        if (!originalEntries.containsKey(manifestEntry)) throw new GradleException('JavaCV manifest is missing')
+        def originalManifest = new java.util.jar.Manifest(new ByteArrayInputStream(originalEntries[manifestEntry]))
+        def rewrittenManifest = new java.util.jar.Manifest(originalManifest)
+        rewrittenManifest.mainAttributes.putValue('Automatic-Module-Name', 'org.bytedeco.javacv')
+        def manifestBytes = new ByteArrayOutputStream()
+        rewrittenManifest.write(manifestBytes)
+
+        File temporaryJar = new File(nestedJar.parentFile, nestedJar.name + '.derived.tmp')
+        temporaryJar.delete()
+        new java.util.zip.ZipOutputStream(new FileOutputStream(temporaryJar)).withCloseable { out ->
+            originalEntries.each { name, bytes ->
+                if (name != moduleDescriptor) {
+                    byte[] payload = name == manifestEntry ? manifestBytes.toByteArray() : bytes
+                    def entry = new java.util.zip.ZipEntry(name)
+                    if (originalTimes[name] > 0) entry.time = originalTimes[name]
+                    out.putNextEntry(entry)
+                    out.write(payload)
+                    out.closeEntry()
+                }
+            }
+        }
+
+        def derivedEntries = new LinkedHashMap<String, byte[]>()
+        new java.util.zip.ZipFile(temporaryJar).withCloseable { zip ->
+            zip.entries().each { entry ->
+                if (!entry.directory) derivedEntries[entry.name] = zip.getInputStream(entry).withCloseable { it.bytes }
+            }
+        }
+        if (derivedEntries.containsKey(moduleDescriptor)) throw new GradleException('Derived JavaCV JAR still has module-info')
+        def classNames = originalEntries.keySet().findAll { it.endsWith('.class') && it != moduleDescriptor }
+        if (classNames.isEmpty() || classNames.any { derivedEntries[it] == null || sha256(originalEntries[it]) != sha256(derivedEntries[it]) }) {
+            throw new GradleException('JavaCV API class bytes changed during derived packaging')
+        }
+        def expectedNames = originalEntries.keySet().findAll { it != moduleDescriptor }
+        if (derivedEntries.keySet() != (expectedNames as Set)) throw new GradleException('Derived JavaCV entry set differs beyond module-info removal')
+        def finalManifest = new java.util.jar.Manifest(new ByteArrayInputStream(derivedEntries[manifestEntry]))
+        if (finalManifest.mainAttributes.getValue('Automatic-Module-Name') != 'org.bytedeco.javacv') {
+            throw new GradleException('Derived JavaCV module name was not preserved')
+        }
+        originalManifest.mainAttributes.each { key, value ->
+            if (key.toString().equalsIgnoreCase('Automatic-Module-Name')) return
+            if (finalManifest.mainAttributes.getValue(key.toString()) != value.toString()) {
+                throw new GradleException("Unexpected JavaCV manifest change: ${key}")
+            }
+        }
+        def preservedNames = expectedNames.findAll { it != manifestEntry }
+        if (preservedNames.any { sha256(originalEntries[it]) != sha256(derivedEntries[it]) }) {
+            throw new GradleException('A non-manifest JavaCV payload entry changed')
+        }
+
+        java.nio.file.Files.move(temporaryJar.toPath(), nestedJar.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING, java.nio.file.StandardCopyOption.ATOMIC_MOVE)
+        def licenseNames = preservedNames.findAll { it ==~ /(?i).*(license|notice|copying).*/ }
+        receiptFile.parentFile.mkdirs()
+        receiptFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([
+            schema: 1,
+            originalSha256: expectedVendorSha,
+            derivedSha256: sha256(nestedJar.bytes),
+            removedEntry: moduleDescriptor,
+            automaticModuleName: 'org.bytedeco.javacv',
+            classEntriesPreserved: classNames.size(),
+            nonManifestEntriesPreserved: preservedNames.size(),
+            licenseNoticeEntriesPreserved: licenseNames.size(),
+            licenseNoticeEntryNames: licenseNames.sort()
+        ])) + '\n'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
