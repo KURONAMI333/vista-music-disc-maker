@@ -11,4 +11,4 @@ Third-party jars are not redistributed here. Put these in `libs/` before buildin
 - Vista 5.5.7 (NeoForge 1.21.1) - https://www.curseforge.com/minecraft/mc-mods/cameramod
 - Moonlight Lib 3.4.0 (NeoForge 1.21.1) - https://www.curseforge.com/minecraft/mc-mods/selene
 
-Then run `./gradlew build` with JDK 25. The jar lands in `build/libs/`.
+Then run `./gradlew build` with JDK 21. The jar lands in `build/libs/`.

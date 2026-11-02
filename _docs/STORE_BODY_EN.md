@@ -1,6 +1,6 @@
 Put a disc made from a YouTube link into a Music Disc Maker Golden Jukebox, and every Vista television linked to that jukebox plays the video in time with the music.
 
-The jukebox keeps playing the sound exactly as before. The television only shows the picture, so pausing, resuming, seeking and ejecting the disc follow the jukebox. A paused disc leaves the last frame on screen.
+The sound still comes from the jukebox, and the jukebox stays in charge: pausing, resuming, seeking and ejecting the disc apply to the picture too. A paused disc leaves the last frame on screen.
 
 ## How to use
 
@@ -14,7 +14,7 @@ Several televisions can show the same jukebox. Install the addon on the server a
 
 Each player's game fetches the video from YouTube itself; the server only tells clients what is playing. On first use the addon downloads yt-dlp and Deno from their official GitHub releases and the FFmpeg libraries from Maven Central, checks each file against a fixed checksum, and keeps them in the `mdm-vista` folder of the game directory.
 
-Video works on Windows (x64) and macOS (Apple Silicon). On other systems the music still plays but the televisions show no video. Video plays at up to 1080p, and only discs made from YouTube links have a picture.
+Video works on Windows (x64) and macOS (Apple Silicon). On other systems the music still plays but the televisions show no video. Video is played at 480p when the video offers it. Only discs made from YouTube links have a picture.
 
 <p><a href="https://www.patreon.com/KURONAMI333"><img src="https://media.forgecdn.net/attachments/description/1564253/description_0b5d69f3-bf0d-4a38-8894-6883abaa65e9.png" width="250" height="100" alt="Support my mods on Patreon"></a> <a href="https://x.com/kuronami333"><img src="https://media.forgecdn.net/attachments/description/1564253/description_0ed421f9-f6e1-4334-8e1e-fac25c804fe6.png" width="250" height="100" alt="Follow @kuronami333 on X"></a> <a href="https://www.youtube.com/channel/UCoimycJCVZmxNKyX9Vr7Apg"><img src="https://media.forgecdn.net/attachments/description/1564253/description_b953be14-e0c1-4290-b5d3-5ae75107ce90.png" width="250" height="100" alt="Watch KURONAMI on YouTube"></a></p>
 
