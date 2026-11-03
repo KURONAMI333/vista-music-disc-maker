@@ -4,8 +4,8 @@ The sound still comes from the jukebox, and the jukebox stays in charge: pausing
 
 ## Required mods
 
-- **Vista** ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/vista) · [Modrinth](https://modrinth.com/mod/vista_tv)) adds cameras, televisions, cassettes and live feeds. Its Television and Hollow Cassette are what this addon shows the video on.
-- **Music Disc Maker** ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/music-disc-maker) · [Modrinth](https://modrinth.com/mod/music-disc-maker)) turns YouTube, SoundCloud and other audio links into playable music discs, and adds the Golden Jukebox.
+- <a href="https://www.curseforge.com/minecraft/mc-mods/vista"><img src="https://media.forgecdn.net/avatars/thumbnails/1488/645/64/64/638967363014143781_animated.gif" width="64" height="64" alt="Vista icon"></a> **Vista** ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/vista) · [Modrinth](https://modrinth.com/mod/vista_tv)) adds cameras, televisions, cassettes and live feeds. Its Television and Hollow Cassette are what this addon shows the video on.
+- <a href="https://www.curseforge.com/minecraft/mc-mods/music-disc-maker"><img src="https://media.forgecdn.net/avatars/thumbnails/2041/309/64/64/639247636507843281.png" width="64" height="64" alt="Music Disc Maker icon"></a> **Music Disc Maker** ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/music-disc-maker) · [Modrinth](https://modrinth.com/mod/music-disc-maker)) turns YouTube, SoundCloud and other audio links into playable music discs, and adds the Golden Jukebox.
 
 ## How to use
 
