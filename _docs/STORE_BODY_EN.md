@@ -2,6 +2,11 @@ Put a disc made from a YouTube link into a Music Disc Maker Golden Jukebox, and 
 
 The sound still comes from the jukebox, and the jukebox stays in charge: pausing, resuming, seeking and ejecting the disc apply to the picture too. A paused disc leaves the last frame on screen.
 
+## Required mods
+
+- **Vista** ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/vista) · [Modrinth](https://modrinth.com/mod/vista_tv)) adds cameras, televisions, cassettes and live feeds. Its Television and Hollow Cassette are what this addon shows the video on.
+- **Music Disc Maker** ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/music-disc-maker) · [Modrinth](https://modrinth.com/mod/music-disc-maker)) turns YouTube, SoundCloud and other audio links into playable music discs, and adds the Golden Jukebox.
+
 ## How to use
 
 1. Use a Hollow Cassette on the Golden Jukebox.
@@ -26,7 +31,7 @@ Video works on Windows (x64) and macOS (Apple Silicon). On other systems the mus
 
 All Rights Reserved. Modpacks may include this addon without permission or credit.
 
-Requires [Vista](https://www.curseforge.com/minecraft/mc-mods/vista) and [Music Disc Maker](https://www.curseforge.com/minecraft/mc-mods/music-disc-maker). Video downloading uses [yt-dlp](https://github.com/yt-dlp/yt-dlp), [Deno](https://github.com/denoland/deno) and [FFmpeg](https://ffmpeg.org/) through [JavaCV](https://github.com/bytedeco/javacv).
+Video downloading uses [yt-dlp](https://github.com/yt-dlp/yt-dlp), [Deno](https://github.com/denoland/deno) and [FFmpeg](https://ffmpeg.org/) through [JavaCV](https://github.com/bytedeco/javacv).
 
 Bugs and questions: comment on the CurseForge page, or DM [@kuronami333 on X](https://x.com/kuronami333).
 
