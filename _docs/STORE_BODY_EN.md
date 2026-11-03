@@ -29,3 +29,5 @@ All Rights Reserved. Modpacks may include this addon without permission or credi
 Requires [Vista](https://www.curseforge.com/minecraft/mc-mods/vista) and [Music Disc Maker](https://www.curseforge.com/minecraft/mc-mods/music-disc-maker). Video downloading uses [yt-dlp](https://github.com/yt-dlp/yt-dlp), [Deno](https://github.com/denoland/deno) and [FFmpeg](https://ffmpeg.org/) through [JavaCV](https://github.com/bytedeco/javacv).
 
 Bugs and questions: comment on the CurseForge page, or DM [@kuronami333 on X](https://x.com/kuronami333).
+
+[Source](https://github.com/KURONAMI333/vista-music-disc-maker)
